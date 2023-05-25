@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.17.1.54307",
-      "templateHash": "11044559957894558898"
+      "templateHash": "18247606585894015082"
     }
   },
   "parameters": {
@@ -38,53 +38,41 @@
         "AuditIfNotExists"
       ]
     },
-    "auditEffect": {
-      "type": "object",
-      "defaultValue": {
-        "type": "Audit",
-        "policyDefinitionReferenceIds": [
-          "sqlManagedInstanceADOnlyEnabledMonitoring",
-          "synapseWorkspaceADOnlyEnabledMonitoring",
-          "sqlServerADOnlyEnabledMonitoring"
-        ]
-      }
+    "Audit_policyDefinitionReferenceIds": {
+      "type": "array",
+      "defaultValue": [
+        "sqlManagedInstanceADOnlyEnabledMonitoring",
+        "synapseWorkspaceADOnlyEnabledMonitoring",
+        "sqlServerADOnlyEnabledMonitoring"
+      ]
     },
-    "AuditIfNotExistsEffect": {
-      "type": "object",
-      "defaultValue": {
-        "type": "AuditIfNotExists",
-        "policyDefinitionReferenceIds": [
-          "mySqlServerADAdminisMonitoring",
-          "postgreSqlServerADAdminisMonitoring",
-          "mySqlServerADOnlyEnabledMonitoring"
-        ]
-      }
+    "AuditIfNotExists_policyDefinitionReferenceIds": {
+      "type": "array",
+      "defaultValue": [
+        "mySqlServerADAdminisMonitoring",
+        "postgreSqlServerADAdminisMonitoring",
+        "mySqlServerADOnlyEnabledMonitoring"
+      ]
     },
-    "disabledEffect": {
-      "type": "object",
-      "defaultValue": {
-        "type": "Disabled",
-        "policyDefinitionReferenceIds": [
-          "aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions",
-          "aPIManagementServiceShouldNotBypassCertificateValidation",
-          "aPIManagementServiceShouldUseEncryptedProtocols",
-          "aPIManagementServiceShouldUseKeyVaultForSecretNamedValues",
-          "aPIManagementServiceShouldHaveDirectManagementEndpointDisabled",
-          "aPIManagementServiceShouldDisableServiceConfigurationEndpoints",
-          "aPIManagementServiceShouldHaveMinimumAPIVersionSet",
-          "aPIManagementServiceShouldHaveBackendCallsAuthenticated"
-        ]
-      }
+    "Disbaled_policyDefinitionReferenceIds": {
+      "type": "array",
+      "defaultValue": [
+        "aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions",
+        "aPIManagementServiceShouldNotBypassCertificateValidation",
+        "aPIManagementServiceShouldUseEncryptedProtocols",
+        "aPIManagementServiceShouldUseKeyVaultForSecretNamedValues",
+        "aPIManagementServiceShouldHaveDirectManagementEndpointDisabled",
+        "aPIManagementServiceShouldDisableServiceConfigurationEndpoints",
+        "aPIManagementServiceShouldHaveMinimumAPIVersionSet",
+        "aPIManagementServiceShouldHaveBackendCallsAuthenticated"
+      ]
     },
-    "denyEffect": {
-      "type": "object",
-      "defaultValue": {
-        "type": "Deny",
-        "policyDefinitionReferenceIds": [
-          "classicComputeVMsMonitoring",
-          "classicStorageAccountsMonitoring"
-        ]
-      }
+    "Deny_policyDefinitionReferenceIds": {
+      "type": "array",
+      "defaultValue": [
+        "classicComputeVMsMonitoring",
+        "classicStorageAccountsMonitoring"
+      ]
     }
   },
   "resources": [
@@ -108,41 +96,41 @@
         "overrides": [
           {
             "kind": "policyEffect",
-            "value": "[parameters('auditEffect').type]",
+            "value": "Audit",
             "selectors": [
               {
                 "kind": "policyDefinitionReferenceId",
-                "in": "[parameters('auditEffect').policyDefinitionReferenceIds]"
+                "in": "[parameters('Audit_policyDefinitionReferenceIds')]"
               }
             ]
           },
           {
             "kind": "policyEffect",
-            "value": "[parameters('AuditIfNotExistsEffect').type]",
+            "value": "AuditIfNotExists",
             "selectors": [
               {
                 "kind": "policyDefinitionReferenceId",
-                "in": "[parameters('AuditIfNotExistsEffect').policyDefinitionReferenceIds]"
+                "in": "[parameters('AuditIfNotExists_policyDefinitionReferenceIds')]"
               }
             ]
           },
           {
             "kind": "policyEffect",
-            "value": "[parameters('disabledEffect').type]",
+            "value": "Disabled",
             "selectors": [
               {
                 "kind": "policyDefinitionReferenceId",
-                "in": "[parameters('disabledEffect').policyDefinitionReferenceIds]"
+                "in": "[parameters('Disbaled_policyDefinitionReferenceIds')]"
               }
             ]
           },
           {
             "kind": "policyEffect",
-            "value": "[parameters('denyEffect').type]",
+            "value": "Deny",
             "selectors": [
               {
                 "kind": "policyDefinitionReferenceId",
-                "in": "[parameters('denyEffect').policyDefinitionReferenceIds]"
+                "in": "[parameters('Deny_policyDefinitionReferenceIds')]"
               }
             ]
           }

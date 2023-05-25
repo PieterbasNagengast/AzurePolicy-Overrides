@@ -30,7 +30,6 @@ param AuditIfNotExists_policyDefinitionReferenceIds array = [
   'postgreSqlServerADAdminisMonitoring' // Policy without initiative parameter
   'mySqlServerADOnlyEnabledMonitoring' // Policy without initiative parameter
 ]
-}
 
 param Disbaled_policyDefinitionReferenceIds array = [
   'aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions' // Policy without initiative parameter
