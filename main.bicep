@@ -19,45 +19,34 @@ param networkSecurityGroupsOnSubnetsMonitoringEffect string = 'AuditIfNotExists'
 ])
 param networkSecurityGroupsOnVirtualMachinesMonitoringEffect string = 'AuditIfNotExists'
 
-param auditEffect object = {
-  type: 'Audit'
-  policyDefinitionReferenceIds: [
-    'sqlManagedInstanceADOnlyEnabledMonitoring' // Policy without initiative parameter
-    'synapseWorkspaceADOnlyEnabledMonitoring' // Policy without initiative parameter
-    'sqlServerADOnlyEnabledMonitoring' // Policy without initiative parameter
-  ]
+param Audit_policyDefinitionReferenceIds array = [
+  'sqlManagedInstanceADOnlyEnabledMonitoring' // Policy without initiative parameter
+  'synapseWorkspaceADOnlyEnabledMonitoring' // Policy without initiative parameter
+  'sqlServerADOnlyEnabledMonitoring' // Policy without initiative parameter
+]
+
+param AuditIfNotExists_policyDefinitionReferenceIds array = [
+  'mySqlServerADAdminisMonitoring' // Policy without initiative parameter
+  'postgreSqlServerADAdminisMonitoring' // Policy without initiative parameter
+  'mySqlServerADOnlyEnabledMonitoring' // Policy without initiative parameter
+]
 }
 
-param AuditIfNotExistsEffect object = {
-  type: 'AuditIfNotExists'
-  policyDefinitionReferenceIds: [
-    'mySqlServerADAdminisMonitoring' // Policy without initiative parameter
-    'postgreSqlServerADAdminisMonitoring' // Policy without initiative parameter
-    'mySqlServerADOnlyEnabledMonitoring' // Policy without initiative parameter
-  ]
-}
+param Disbaled_policyDefinitionReferenceIds array = [
+  'aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions' // Policy without initiative parameter
+  'aPIManagementServiceShouldNotBypassCertificateValidation' // Policy without initiative parameter
+  'aPIManagementServiceShouldUseEncryptedProtocols' // Policy without initiative parameter
+  'aPIManagementServiceShouldUseKeyVaultForSecretNamedValues' // Policy without initiative parameter
+  'aPIManagementServiceShouldHaveDirectManagementEndpointDisabled' // Policy without initiative parameter
+  'aPIManagementServiceShouldDisableServiceConfigurationEndpoints' // Policy without initiative parameter
+  'aPIManagementServiceShouldHaveMinimumAPIVersionSet' // Policy without initiative parameter
+  'aPIManagementServiceShouldHaveBackendCallsAuthenticated' // Policy without initiative parameter
+]
 
-param disabledEffect object = {
-  type: 'Disabled'
-  policyDefinitionReferenceIds: [
-    'aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions' // Policy without initiative parameter
-    'aPIManagementServiceShouldNotBypassCertificateValidation' // Policy without initiative parameter
-    'aPIManagementServiceShouldUseEncryptedProtocols' // Policy without initiative parameter
-    'aPIManagementServiceShouldUseKeyVaultForSecretNamedValues' // Policy without initiative parameter
-    'aPIManagementServiceShouldHaveDirectManagementEndpointDisabled' // Policy without initiative parameter
-    'aPIManagementServiceShouldDisableServiceConfigurationEndpoints' // Policy without initiative parameter
-    'aPIManagementServiceShouldHaveMinimumAPIVersionSet' // Policy without initiative parameter
-    'aPIManagementServiceShouldHaveBackendCallsAuthenticated' // Policy without initiative parameter
-  ]
-}
-
-param denyEffect object = {
-  type: 'Deny'
-  policyDefinitionReferenceIds: [
-    'classicComputeVMsMonitoring' // Policy with initiative parameter but used in policy override
-    'classicStorageAccountsMonitoring' // Policy with initiative parameter but used in policy override
-  ]
-}
+param Deny_policyDefinitionReferenceIds array = [
+  'classicComputeVMsMonitoring' // Policy with initiative parameter but used in policy override
+  'classicStorageAccountsMonitoring' // Policy with initiative parameter but used in policy override
+]
 
 resource PolicyAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01' = {
   name: Assignment.name
@@ -77,41 +66,41 @@ resource PolicyAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01'
     overrides: [
       {
         kind: 'policyEffect'
-        value: auditEffect.type
+        value: 'Audit'
         selectors: [
           {
             kind: 'policyDefinitionReferenceId'
-            in: auditEffect.policyDefinitionReferenceIds
+            in: Audit_policyDefinitionReferenceIds
           }
         ]
       }
       {
         kind: 'policyEffect'
-        value: AuditIfNotExistsEffect.type
+        value: 'AuditIfNotExists'
         selectors: [
           {
             kind: 'policyDefinitionReferenceId'
-            in: AuditIfNotExistsEffect.policyDefinitionReferenceIds
+            in: AuditIfNotExists_policyDefinitionReferenceIds
           }
         ]
       }
       {
         kind: 'policyEffect'
-        value: disabledEffect.type
+        value: 'Disabled'
         selectors: [
           {
             kind: 'policyDefinitionReferenceId'
-            in: disabledEffect.policyDefinitionReferenceIds
+            in: Disbaled_policyDefinitionReferenceIds
           }
         ]
       }
       {
         kind: 'policyEffect'
-        value: denyEffect.type
+        value: 'Deny'
         selectors: [
           {
             kind: 'policyDefinitionReferenceId'
-            in: denyEffect.policyDefinitionReferenceIds
+            in: Deny_policyDefinitionReferenceIds
           }
         ]
       }
