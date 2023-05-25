@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.17.1.54307",
-      "templateHash": "18247606585894015082"
+      "templateHash": "17203352782798143013"
     }
   },
   "parameters": {
@@ -19,60 +19,38 @@
         "name": "MS-Cloud-Sec-Benchmark",
         "displayname": "Microsoft Cloud Security Benchmark",
         "description": "Microsoft Cloud Security Benchmark policy assignment including Overrides",
-        "definitionID": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8"
+        "definitionID": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8",
+        "parameters": {
+          "networkSecurityGroupsOnSubnetsMonitoringEffect": "AuditIfNotExists",
+          "networkSecurityGroupsOnVirtualMachinesMonitoringEffect": "AuditIfNotExists"
+        },
+        "overrides": {
+          "Audit": [
+            "sqlManagedInstanceADOnlyEnabledMonitoring",
+            "synapseWorkspaceADOnlyEnabledMonitoring",
+            "sqlServerADOnlyEnabledMonitoring"
+          ],
+          "AuditIfNotExists": [
+            "mySqlServerADAdminisMonitoring",
+            "postgreSqlServerADAdminisMonitoring",
+            "mySqlServerADOnlyEnabledMonitoring"
+          ],
+          "Disabled": [
+            "aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions",
+            "aPIManagementServiceShouldNotBypassCertificateValidation",
+            "aPIManagementServiceShouldUseEncryptedProtocols",
+            "aPIManagementServiceShouldUseKeyVaultForSecretNamedValues",
+            "aPIManagementServiceShouldHaveDirectManagementEndpointDisabled",
+            "aPIManagementServiceShouldDisableServiceConfigurationEndpoints",
+            "aPIManagementServiceShouldHaveMinimumAPIVersionSet",
+            "aPIManagementServiceShouldHaveBackendCallsAuthenticated"
+          ],
+          "Deny": [
+            "classicComputeVMsMonitoring",
+            "classicStorageAccountsMonitoring"
+          ]
+        }
       }
-    },
-    "networkSecurityGroupsOnSubnetsMonitoringEffect": {
-      "type": "string",
-      "defaultValue": "AuditIfNotExists",
-      "allowedValues": [
-        "Disabled",
-        "AuditIfNotExists"
-      ]
-    },
-    "networkSecurityGroupsOnVirtualMachinesMonitoringEffect": {
-      "type": "string",
-      "defaultValue": "AuditIfNotExists",
-      "allowedValues": [
-        "Disabled",
-        "AuditIfNotExists"
-      ]
-    },
-    "Audit_policyDefinitionReferenceIds": {
-      "type": "array",
-      "defaultValue": [
-        "sqlManagedInstanceADOnlyEnabledMonitoring",
-        "synapseWorkspaceADOnlyEnabledMonitoring",
-        "sqlServerADOnlyEnabledMonitoring"
-      ]
-    },
-    "AuditIfNotExists_policyDefinitionReferenceIds": {
-      "type": "array",
-      "defaultValue": [
-        "mySqlServerADAdminisMonitoring",
-        "postgreSqlServerADAdminisMonitoring",
-        "mySqlServerADOnlyEnabledMonitoring"
-      ]
-    },
-    "Disbaled_policyDefinitionReferenceIds": {
-      "type": "array",
-      "defaultValue": [
-        "aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions",
-        "aPIManagementServiceShouldNotBypassCertificateValidation",
-        "aPIManagementServiceShouldUseEncryptedProtocols",
-        "aPIManagementServiceShouldUseKeyVaultForSecretNamedValues",
-        "aPIManagementServiceShouldHaveDirectManagementEndpointDisabled",
-        "aPIManagementServiceShouldDisableServiceConfigurationEndpoints",
-        "aPIManagementServiceShouldHaveMinimumAPIVersionSet",
-        "aPIManagementServiceShouldHaveBackendCallsAuthenticated"
-      ]
-    },
-    "Deny_policyDefinitionReferenceIds": {
-      "type": "array",
-      "defaultValue": [
-        "classicComputeVMsMonitoring",
-        "classicStorageAccountsMonitoring"
-      ]
     }
   },
   "resources": [
@@ -87,10 +65,10 @@
         "policyDefinitionId": "[parameters('Assignment').definitionID]",
         "parameters": {
           "networkSecurityGroupsOnSubnetsMonitoringEffect": {
-            "value": "[parameters('networkSecurityGroupsOnSubnetsMonitoringEffect')]"
+            "value": "[parameters('Assignment').parameters.networkSecurityGroupsOnSubnetsMonitoringEffect]"
           },
           "networkSecurityGroupsOnVirtualMachinesMonitoringEffect": {
-            "value": "[parameters('networkSecurityGroupsOnVirtualMachinesMonitoringEffect')]"
+            "value": "[parameters('Assignment').parameters.networkSecurityGroupsOnVirtualMachinesMonitoringEffect]"
           }
         },
         "overrides": [
@@ -100,7 +78,7 @@
             "selectors": [
               {
                 "kind": "policyDefinitionReferenceId",
-                "in": "[parameters('Audit_policyDefinitionReferenceIds')]"
+                "in": "[parameters('Assignment').overrides.Audit]"
               }
             ]
           },
@@ -110,7 +88,7 @@
             "selectors": [
               {
                 "kind": "policyDefinitionReferenceId",
-                "in": "[parameters('AuditIfNotExists_policyDefinitionReferenceIds')]"
+                "in": "[parameters('Assignment').overrides.AuditIfNotExists]"
               }
             ]
           },
@@ -120,7 +98,7 @@
             "selectors": [
               {
                 "kind": "policyDefinitionReferenceId",
-                "in": "[parameters('Disbaled_policyDefinitionReferenceIds')]"
+                "in": "[parameters('Assignment').overrides.Disabled]"
               }
             ]
           },
@@ -130,7 +108,7 @@
             "selectors": [
               {
                 "kind": "policyDefinitionReferenceId",
-                "in": "[parameters('Deny_policyDefinitionReferenceIds')]"
+                "in": "[parameters('Assignment').overrides.Deny]"
               }
             ]
           }

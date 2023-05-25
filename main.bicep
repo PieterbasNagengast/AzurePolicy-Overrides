@@ -6,46 +6,37 @@ param Assignment object = {
   displayname: 'Microsoft Cloud Security Benchmark'
   description: 'Microsoft Cloud Security Benchmark policy assignment including Overrides'
   definitionID: '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8'
+  parameters: {
+    networkSecurityGroupsOnSubnetsMonitoringEffect: 'AuditIfNotExists'
+    networkSecurityGroupsOnVirtualMachinesMonitoringEffect: 'AuditIfNotExists'
+  }
+  overrides: {
+    Audit: [
+      'sqlManagedInstanceADOnlyEnabledMonitoring' // Policy without initiative parameter
+      'synapseWorkspaceADOnlyEnabledMonitoring' // Policy without initiative parameter
+      'sqlServerADOnlyEnabledMonitoring' // Policy without initiative parameter
+    ]
+    AuditIfNotExists: [
+      'mySqlServerADAdminisMonitoring' // Policy without initiative parameter
+      'postgreSqlServerADAdminisMonitoring' // Policy without initiative parameter
+      'mySqlServerADOnlyEnabledMonitoring' // Policy without initiative parameter
+    ]
+    Disabled: [
+      'aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions' // Policy without initiative parameter
+      'aPIManagementServiceShouldNotBypassCertificateValidation' // Policy without initiative parameter
+      'aPIManagementServiceShouldUseEncryptedProtocols' // Policy without initiative parameter
+      'aPIManagementServiceShouldUseKeyVaultForSecretNamedValues' // Policy without initiative parameter
+      'aPIManagementServiceShouldHaveDirectManagementEndpointDisabled' // Policy without initiative parameter
+      'aPIManagementServiceShouldDisableServiceConfigurationEndpoints' // Policy without initiative parameter
+      'aPIManagementServiceShouldHaveMinimumAPIVersionSet' // Policy without initiative parameter
+      'aPIManagementServiceShouldHaveBackendCallsAuthenticated' // Policy without initiative parameter
+    ]
+    Deny: [
+      'classicComputeVMsMonitoring' // Policy with initiative parameter but used in policy override
+      'classicStorageAccountsMonitoring' // Policy with initiative parameter but used in policy override
+    ]
+  }
 }
-@allowed([
-  'Disabled'
-  'AuditIfNotExists'
-])
-param networkSecurityGroupsOnSubnetsMonitoringEffect string = 'AuditIfNotExists'
-
-@allowed([
-  'Disabled'
-  'AuditIfNotExists'
-])
-param networkSecurityGroupsOnVirtualMachinesMonitoringEffect string = 'AuditIfNotExists'
-
-param Audit_policyDefinitionReferenceIds array = [
-  'sqlManagedInstanceADOnlyEnabledMonitoring' // Policy without initiative parameter
-  'synapseWorkspaceADOnlyEnabledMonitoring' // Policy without initiative parameter
-  'sqlServerADOnlyEnabledMonitoring' // Policy without initiative parameter
-]
-
-param AuditIfNotExists_policyDefinitionReferenceIds array = [
-  'mySqlServerADAdminisMonitoring' // Policy without initiative parameter
-  'postgreSqlServerADAdminisMonitoring' // Policy without initiative parameter
-  'mySqlServerADOnlyEnabledMonitoring' // Policy without initiative parameter
-]
-
-param Disbaled_policyDefinitionReferenceIds array = [
-  'aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions' // Policy without initiative parameter
-  'aPIManagementServiceShouldNotBypassCertificateValidation' // Policy without initiative parameter
-  'aPIManagementServiceShouldUseEncryptedProtocols' // Policy without initiative parameter
-  'aPIManagementServiceShouldUseKeyVaultForSecretNamedValues' // Policy without initiative parameter
-  'aPIManagementServiceShouldHaveDirectManagementEndpointDisabled' // Policy without initiative parameter
-  'aPIManagementServiceShouldDisableServiceConfigurationEndpoints' // Policy without initiative parameter
-  'aPIManagementServiceShouldHaveMinimumAPIVersionSet' // Policy without initiative parameter
-  'aPIManagementServiceShouldHaveBackendCallsAuthenticated' // Policy without initiative parameter
-]
-
-param Deny_policyDefinitionReferenceIds array = [
-  'classicComputeVMsMonitoring' // Policy with initiative parameter but used in policy override
-  'classicStorageAccountsMonitoring' // Policy with initiative parameter but used in policy override
-]
 
 resource PolicyAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01' = {
   name: Assignment.name
@@ -56,10 +47,10 @@ resource PolicyAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01'
     policyDefinitionId: Assignment.definitionID
     parameters: {
       networkSecurityGroupsOnSubnetsMonitoringEffect: {
-        value: networkSecurityGroupsOnSubnetsMonitoringEffect
+        value: Assignment.parameters.networkSecurityGroupsOnSubnetsMonitoringEffect
       }
       networkSecurityGroupsOnVirtualMachinesMonitoringEffect: {
-        value: networkSecurityGroupsOnVirtualMachinesMonitoringEffect
+        value: Assignment.parameters.networkSecurityGroupsOnVirtualMachinesMonitoringEffect
       }
     }
     overrides: [
@@ -69,7 +60,7 @@ resource PolicyAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01'
         selectors: [
           {
             kind: 'policyDefinitionReferenceId'
-            in: Audit_policyDefinitionReferenceIds
+            in: Assignment.overrides.Audit
           }
         ]
       }
@@ -79,7 +70,7 @@ resource PolicyAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01'
         selectors: [
           {
             kind: 'policyDefinitionReferenceId'
-            in: AuditIfNotExists_policyDefinitionReferenceIds
+            in: Assignment.overrides.AuditIfNotExists
           }
         ]
       }
@@ -89,7 +80,7 @@ resource PolicyAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01'
         selectors: [
           {
             kind: 'policyDefinitionReferenceId'
-            in: Disbaled_policyDefinitionReferenceIds
+            in: Assignment.overrides.Disabled
           }
         ]
       }
@@ -99,7 +90,7 @@ resource PolicyAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01'
         selectors: [
           {
             kind: 'policyDefinitionReferenceId'
-            in: Deny_policyDefinitionReferenceIds
+            in: Assignment.overrides.Deny
           }
         ]
       }
