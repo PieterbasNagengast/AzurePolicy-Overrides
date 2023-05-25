@@ -1,0 +1,87 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.17.1.54307",
+      "templateHash": "17360120577243566318"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[deployment().location]"
+    },
+    "Assignment": {
+      "type": "object",
+      "defaultValue": {
+        "name": "Microsoft cloud security benchmark",
+        "definitionID": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8"
+      }
+    },
+    "auditEffect": {
+      "type": "object",
+      "defaultValue": {
+        "type": "audit",
+        "policyDefinitionReferenceIds": [
+          "sqlServerADOnlyEnabledMonitoring",
+          "mySqlServerADAdminisMonitoring",
+          "postgreSqlServerADAdminisMonitoring",
+          "sqlManagedInstanceADOnlyEnabledMonitoring",
+          "synapseWorkspaceADOnlyEnabledMonitoring",
+          "mySqlServerADOnlyEnabledMonitoring"
+        ]
+      }
+    },
+    "disbaledEffect": {
+      "type": "object",
+      "defaultValue": {
+        "type": "disbaled",
+        "policyDefinitionReferenceIds": [
+          "aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions",
+          "aPIManagementServiceShouldNotBypassCertificateValidation",
+          "aPIManagementServiceShouldUseEncryptedProtocols",
+          "aPIManagementServiceShouldUseKeyVaultForSecretNamedValues",
+          "aPIManagementServiceShouldHaveDirectManagementEndpointDisabled",
+          "aPIManagementServiceShouldDisableServiceConfigurationEndpoints",
+          "aPIManagementServiceShouldHaveMinimumAPIVersionSet",
+          "aPIManagementServiceShouldHaveBackendCallsAuthenticated"
+        ]
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyAssignments",
+      "apiVersion": "2022-06-01",
+      "name": "[parameters('Assignment').name]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "policyDefinitionId": "[parameters('Assignment').definitionID]",
+        "overrides": [
+          {
+            "kind": "policyEffect",
+            "value": "[parameters('auditEffect').type]",
+            "selectors": [
+              {
+                "kind": "policyDefinitionReferenceId",
+                "in": "[parameters('auditEffect').policyDefinitionReferenceIds]"
+              }
+            ]
+          },
+          {
+            "kind": "policyEffect",
+            "value": "[parameters('disbaledEffect').type]",
+            "selectors": [
+              {
+                "kind": "policyDefinitionReferenceId",
+                "in": "[parameters('disbaledEffect').policyDefinitionReferenceIds]"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
