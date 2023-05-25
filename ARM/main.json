@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.17.1.54307",
-      "templateHash": "15523715755055905966"
+      "templateHash": "11044559957894558898"
     }
   },
   "parameters": {
@@ -16,20 +16,46 @@
     "Assignment": {
       "type": "object",
       "defaultValue": {
-        "name": "Microsoft cloud security benchmark",
+        "name": "MS-Cloud-Sec-Benchmark",
+        "displayname": "Microsoft Cloud Security Benchmark",
+        "description": "Microsoft Cloud Security Benchmark policy assignment including Overrides",
         "definitionID": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8"
       }
+    },
+    "networkSecurityGroupsOnSubnetsMonitoringEffect": {
+      "type": "string",
+      "defaultValue": "AuditIfNotExists",
+      "allowedValues": [
+        "Disabled",
+        "AuditIfNotExists"
+      ]
+    },
+    "networkSecurityGroupsOnVirtualMachinesMonitoringEffect": {
+      "type": "string",
+      "defaultValue": "AuditIfNotExists",
+      "allowedValues": [
+        "Disabled",
+        "AuditIfNotExists"
+      ]
     },
     "auditEffect": {
       "type": "object",
       "defaultValue": {
-        "type": "audit",
+        "type": "Audit",
         "policyDefinitionReferenceIds": [
-          "sqlServerADOnlyEnabledMonitoring",
-          "mySqlServerADAdminisMonitoring",
-          "postgreSqlServerADAdminisMonitoring",
           "sqlManagedInstanceADOnlyEnabledMonitoring",
           "synapseWorkspaceADOnlyEnabledMonitoring",
+          "sqlServerADOnlyEnabledMonitoring"
+        ]
+      }
+    },
+    "AuditIfNotExistsEffect": {
+      "type": "object",
+      "defaultValue": {
+        "type": "AuditIfNotExists",
+        "policyDefinitionReferenceIds": [
+          "mySqlServerADAdminisMonitoring",
+          "postgreSqlServerADAdminisMonitoring",
           "mySqlServerADOnlyEnabledMonitoring"
         ]
       }
@@ -37,7 +63,7 @@
     "disabledEffect": {
       "type": "object",
       "defaultValue": {
-        "type": "disbaled",
+        "type": "Disabled",
         "policyDefinitionReferenceIds": [
           "aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions",
           "aPIManagementServiceShouldNotBypassCertificateValidation",
@@ -49,6 +75,16 @@
           "aPIManagementServiceShouldHaveBackendCallsAuthenticated"
         ]
       }
+    },
+    "denyEffect": {
+      "type": "object",
+      "defaultValue": {
+        "type": "Deny",
+        "policyDefinitionReferenceIds": [
+          "classicComputeVMsMonitoring",
+          "classicStorageAccountsMonitoring"
+        ]
+      }
     }
   },
   "resources": [
@@ -58,7 +94,17 @@
       "name": "[parameters('Assignment').name]",
       "location": "[parameters('location')]",
       "properties": {
+        "displayName": "[parameters('Assignment').displayname]",
+        "description": "[parameters('Assignment').description]",
         "policyDefinitionId": "[parameters('Assignment').definitionID]",
+        "parameters": {
+          "networkSecurityGroupsOnSubnetsMonitoringEffect": {
+            "value": "[parameters('networkSecurityGroupsOnSubnetsMonitoringEffect')]"
+          },
+          "networkSecurityGroupsOnVirtualMachinesMonitoringEffect": {
+            "value": "[parameters('networkSecurityGroupsOnVirtualMachinesMonitoringEffect')]"
+          }
+        },
         "overrides": [
           {
             "kind": "policyEffect",
@@ -72,11 +118,31 @@
           },
           {
             "kind": "policyEffect",
+            "value": "[parameters('AuditIfNotExistsEffect').type]",
+            "selectors": [
+              {
+                "kind": "policyDefinitionReferenceId",
+                "in": "[parameters('AuditIfNotExistsEffect').policyDefinitionReferenceIds]"
+              }
+            ]
+          },
+          {
+            "kind": "policyEffect",
             "value": "[parameters('disabledEffect').type]",
             "selectors": [
               {
                 "kind": "policyDefinitionReferenceId",
                 "in": "[parameters('disabledEffect').policyDefinitionReferenceIds]"
+              }
+            ]
+          },
+          {
+            "kind": "policyEffect",
+            "value": "[parameters('denyEffect').type]",
+            "selectors": [
+              {
+                "kind": "policyDefinitionReferenceId",
+                "in": "[parameters('denyEffect').policyDefinitionReferenceIds]"
               }
             ]
           }
