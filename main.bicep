@@ -18,7 +18,7 @@ param auditEffect object = {
   ]
 }
 
-param disbaledEffect object = {
+param disabledEffect object = {
   type: 'disbaled'
   policyDefinitionReferenceIds: [
     'aPIManagementServiceShouldNotHaveAllApisScopedSubscriptions'
@@ -50,11 +50,11 @@ resource PolicyAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01'
       }
       {
         kind: 'policyEffect'
-        value: disbaledEffect.type
+        value: disabledEffect.type
         selectors: [
           {
             kind: 'policyDefinitionReferenceId'
-            in: disbaledEffect.policyDefinitionReferenceIds
+            in: disabledEffect.policyDefinitionReferenceIds
           }
         ]
       }

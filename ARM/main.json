@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.17.1.54307",
-      "templateHash": "17360120577243566318"
+      "templateHash": "15523715755055905966"
     }
   },
   "parameters": {
@@ -34,7 +34,7 @@
         ]
       }
     },
-    "disbaledEffect": {
+    "disabledEffect": {
       "type": "object",
       "defaultValue": {
         "type": "disbaled",
@@ -72,11 +72,11 @@
           },
           {
             "kind": "policyEffect",
-            "value": "[parameters('disbaledEffect').type]",
+            "value": "[parameters('disabledEffect').type]",
             "selectors": [
               {
                 "kind": "policyDefinitionReferenceId",
-                "in": "[parameters('disbaledEffect').policyDefinitionReferenceIds]"
+                "in": "[parameters('disabledEffect').policyDefinitionReferenceIds]"
               }
             ]
           }
